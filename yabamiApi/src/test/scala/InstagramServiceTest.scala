@@ -1,9 +1,10 @@
 import akka.actor.ActorSystem
 import akka.http.scaladsl.testkit.RouteTestTimeout
-import com.yukihirai0505.iService.responses.{ProfileUserData, Tag}
+import com.yukihirai0505.iService.responses.{AccountPostQuery, PageInfo, ProfileUserData, Tag}
 import io.circe.generic.auto._
 import org.scalatest.concurrent.ScalaFutures
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
@@ -29,6 +30,14 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
     "retrieve user info" in new Context {
       Get(s"/instagram/users/$targetAccountName") ~> route ~> check {
         responseAs[Option[ProfileUserData]].isEmpty should be(false)
+      }
+    }
+
+    "retrieve user posts paging" in new Context {
+      val userInfo: ProfileUserData = Await.result(instagramService.getUserInfo(targetAccountName), Duration.Inf).get
+      val pageInfo: PageInfo = userInfo.media.pageInfo
+      Get(s"/instagram/users/${userInfo.id}/media/${pageInfo.endCursor.get}") ~> route ~> check {
+        responseAs[Option[AccountPostQuery]].isEmpty should be(false)
       }
     }
 
