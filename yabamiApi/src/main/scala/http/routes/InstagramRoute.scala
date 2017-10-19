@@ -9,14 +9,16 @@ import services.InstagramService
 import scala.concurrent.ExecutionContextExecutor
 
 class InstagramRoute(instagramService: InstagramService
-                 )(implicit ec: ExecutionContextExecutor) extends CirceSupport {
+                    )(implicit ec: ExecutionContextExecutor) extends CirceSupport {
 
   import instagramService._
 
   val route = pathPrefix("instagram") {
-    pathEndOrSingleSlash {
+    pathPrefix("users") {
       get {
-        complete(getSample.map(_.asJson))
+        path(Remaining) { accountName =>
+          complete(getUserInfo(accountName).map(_.asJson))
+        }
       }
     }
   }

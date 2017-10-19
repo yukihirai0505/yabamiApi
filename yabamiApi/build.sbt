@@ -20,6 +20,9 @@ libraryDependencies ++= {
     "io.circe" %% "circe-generic" % circeV,
     "io.circe" %% "circe-parser" % circeV,
 
+    // iService
+    "com.yukihirai0505" % "iservice_2.11" % "2.2.3",
+
     "org.scalatest" %% "scalatest" % scalaTestV % "test",
     "com.typesafe.akka" %% "akka-http-testkit" % akkaV % "test"
   )

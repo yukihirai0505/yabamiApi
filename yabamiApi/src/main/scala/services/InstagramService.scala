@@ -1,22 +1,17 @@
 package services
 
-import models.SampleEntity
+import com.yukihirai0505.iService.responses.ProfileUserData
+import com.yukihirai0505.iService.services.UserService
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 class InstagramService(implicit ec: ExecutionContextExecutor) {
 
-  def getSample: Future[Seq[SampleEntity]] = {
-    Future successful Seq(
-      SampleEntity(
-        username = "hoge",
-        email = "hoge@xxx.com"
-      ),
-      SampleEntity(
-        username = "sage",
-        email = "sage@xxx.com"
-      )
-    )
+  def getUserInfo(accountName: String): Future[Option[ProfileUserData]] = {
+    UserService.getUserInfo(accountName).flatMap {
+      case Right(data) => Future successful Some(data)
+      case Left(e) => Future successful None
+    }
   }
 
 }
