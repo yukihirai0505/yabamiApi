@@ -20,8 +20,8 @@ class InstagramRoute(instagramService: InstagramService
       get {
         path(Segment) { accountName =>
           complete(getUserInfo(accountName).map(_.asJson))
-        } ~ path(Segment / "media" / Segment) { (userId, maxId) =>
-          complete(getUserPostsPaging(userId, maxId).map(_.asJson))
+        } ~ path(Segment / "media" / Segment) { (userId, afterCode) =>
+          complete(getUserPostsPaging(userId, afterCode).map(_.asJson))
         }
       }
     } ~ pathPrefix("tags") {
