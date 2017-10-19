@@ -18,13 +18,15 @@ class InstagramRoute(instagramService: InstagramService
   val route = pathPrefix("instagram") {
     pathPrefix("users") {
       get {
-        path(Remaining) { accountName =>
+        path(Segment) { accountName =>
           complete(getUserInfo(accountName).map(_.asJson))
+        } ~ path(Segment / "media" / Segment) { (userId, maxId) =>
+          complete(getUserPostsPaging(userId, maxId).map(_.asJson))
         }
       }
     } ~ pathPrefix("tags") {
       get {
-        path(Remaining) { tagName =>
+        path(Segment) { tagName =>
           complete(getTagInfo(URLDecoder.decode(tagName, "UTF-8")).map(_.asJson))
         }
       }
