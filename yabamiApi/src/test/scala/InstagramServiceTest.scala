@@ -7,6 +7,13 @@ import org.scalatest.concurrent.ScalaFutures
 import scala.concurrent.duration._
 
 class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
+
+  /**
+    * if using dynamic variable route, this is necessary to complete test with success
+    * ref: https://stackoverflow.com/questions/30977860/akka-http-route-test-request-was-neither-completed-nor-rejected-within-1-second
+    * @param system
+    * @return
+    */
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(2.second)
 
   val targetAccountName = "i_do_not_like_fashion"
