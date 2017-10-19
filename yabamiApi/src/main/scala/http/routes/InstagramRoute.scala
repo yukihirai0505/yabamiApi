@@ -1,5 +1,7 @@
 package http.routes
 
+import java.net.URLDecoder
+
 import akka.http.scaladsl.server.Directives._
 import de.heikoseeberger.akkahttpcirce.CirceSupport
 import io.circe.generic.auto._
@@ -18,6 +20,12 @@ class InstagramRoute(instagramService: InstagramService
       get {
         path(Remaining) { accountName =>
           complete(getUserInfo(accountName).map(_.asJson))
+        }
+      }
+    } ~ pathPrefix("tags") {
+      get {
+        path(Remaining) { tagName =>
+          complete(getTagInfo(URLDecoder.decode(tagName, "UTF-8")).map(_.asJson))
         }
       }
     }
