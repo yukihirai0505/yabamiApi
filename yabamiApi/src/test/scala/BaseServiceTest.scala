@@ -4,14 +4,14 @@ import http.HttpService
 import org.scalatest.{Matchers, WordSpec}
 import services._
 
+
 /**
   * author Yuki Hirai on 2017/06/27.
   */
 trait BaseServiceTest extends WordSpec with Matchers with ScalatestRouteTest with CirceSupport {
-
-  val sampleService = new InstagramService()
+  val instagramService = new InstagramService()
   val httpService = new HttpService(
-    sampleService
+    instagramService
   )
 
 }
