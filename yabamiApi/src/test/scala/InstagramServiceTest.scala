@@ -1,6 +1,6 @@
 import akka.actor.ActorSystem
 import akka.http.scaladsl.testkit.RouteTestTimeout
-import com.yukihirai0505.iService.responses.{AccountPostQuery, PageInfo, ProfileUserData, Tag}
+import com.yukihirai0505.iService.responses._
 import io.circe.generic.auto._
 import org.scalatest.concurrent.ScalaFutures
 
@@ -44,6 +44,15 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
     "retrieve tag info" in new Context {
       Get(s"/instagram/tags/$targetTagName") ~> route ~> check {
         responseAs[Option[Tag]].isEmpty should be(false)
+      }
+    }
+
+    "retrieve tag posts paging" in new Context {
+      val hasManyPostsHashTag = "like4like"
+      val tagInfo: Tag = Await.result(instagramService.getTagInfo(hasManyPostsHashTag), Duration.Inf).get
+      val pageInfo = tagInfo.media.pageInfo
+      Get(s"/instagram/tags/$hasManyPostsHashTag/media/${pageInfo.endCursor.get}") ~> route ~> check {
+        responseAs[Option[MediaQuery]].isEmpty should be(false)
       }
     }
   }

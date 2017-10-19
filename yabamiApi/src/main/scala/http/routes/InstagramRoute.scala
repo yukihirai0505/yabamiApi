@@ -28,6 +28,8 @@ class InstagramRoute(instagramService: InstagramService
       get {
         path(Segment) { tagName =>
           complete(getTagInfo(URLDecoder.decode(tagName, "UTF-8")).map(_.asJson))
+        } ~ path(Segment / "media" / Segment) { (tagName, afterCode) =>
+          complete(getTagPostsPaging(URLDecoder.decode(tagName, "UTF-8"), afterCode).map(_.asJson))
         }
       }
     }
