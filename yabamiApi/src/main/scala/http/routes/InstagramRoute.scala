@@ -20,19 +20,36 @@ class InstagramRoute(instagramService: InstagramService
       get {
         path(Segment) { accountName =>
           complete(getUserInfo(accountName).map(_.asJson))
-        } ~ path(Segment / "media" / Segment) { (userId, afterCode) =>
-          complete(getUserPostsPaging(userId, afterCode).map(_.asJson))
+        } ~ path(Segment / "media") { userId =>
+          parameters('afterCode.as[String].?) { afterCode =>
+            complete(getUserPostsPaging(userId, afterCode.getOrElse("")).map(_.asJson))
+          }
         }
       }
     } ~ pathPrefix("tags") {
       get {
         path(Segment) { tagName =>
-          complete(getTagInfo(URLDecoder.decode(tagName, "UTF-8")).map(_.asJson))
-        } ~ path(Segment / "media" / Segment) { (tagName, afterCode) =>
-          complete(getTagPostsPaging(URLDecoder.decode(tagName, "UTF-8"), afterCode).map(_.asJson))
+          complete(getTagInfo(decode(tagName)).map(_.asJson))
+        } ~ path(Segment / "media") { tagName =>
+          parameters('afterCode.as[String].?) { afterCode =>
+            complete(getTagPostsPaging(decode(tagName), afterCode.getOrElse("")).map(_.asJson))
+          }
+        }
+      }
+    } ~ pathPrefix("media") {
+      get {
+        path("shortcode" / Segment) { shortcode =>
+          complete(getMediaInfo(shortcode).map(_.asJson))
+        } ~ path("shortcode" / Segment / "comments") { shortcode =>
+          parameters('afterCode.as[String].?) { afterCode =>
+            complete(getCommentPaging(shortcode, afterCode.getOrElse("")))
+          }
         }
       }
     }
   }
 
+  private def decode(str: String) = {
+    URLDecoder.decode(str, "UTF-8")
+  }
 }

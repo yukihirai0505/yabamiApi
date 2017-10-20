@@ -16,10 +16,11 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
     * @param system
     * @return
     */
-  implicit def default(implicit system: ActorSystem) = RouteTestTimeout(2.second)
+  implicit def default(implicit system: ActorSystem) = RouteTestTimeout(10.second)
 
   val targetAccountName = "i_do_not_like_fashion"
   val targetTagName = "idonotlikefashion"
+  var targetShortcode = "BaczO1-BOdy"
 
   trait Context {
     val route = httpService.instagramRoute.route
@@ -36,8 +37,8 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
     "retrieve user posts paging" in new Context {
       val userInfo: ProfileUserData = Await.result(instagramService.getUserInfo(targetAccountName), Duration.Inf).get
       val pageInfo: PageInfo = userInfo.media.pageInfo
-      Get(s"/instagram/users/${userInfo.id}/media/${pageInfo.endCursor.get}") ~> route ~> check {
-        responseAs[Option[AccountPostQuery]].isEmpty should be(false)
+      Get(s"/instagram/users/${userInfo.id}/media?afterCode=${pageInfo.endCursor.get}") ~> route ~> check {
+        responseAs[Option[UserPostQuery]].isEmpty should be(false)
       }
     }
 
@@ -51,10 +52,26 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
       val hasManyPostsHashTag = "like4like"
       val tagInfo: Tag = Await.result(instagramService.getTagInfo(hasManyPostsHashTag), Duration.Inf).get
       val pageInfo = tagInfo.media.pageInfo
-      Get(s"/instagram/tags/$hasManyPostsHashTag/media/${pageInfo.endCursor.get}") ~> route ~> check {
+      Get(s"/instagram/tags/$hasManyPostsHashTag/media?afterCode=${pageInfo.endCursor.get}") ~> route ~> check {
         responseAs[Option[MediaQuery]].isEmpty should be(false)
       }
     }
+
+    "retrieve media info" in new Context {
+      Get(s"/instagram/media/shortcode/$targetShortcode") ~> route ~> check {
+        responseAs[Option[PostPageGraphql]].isEmpty should be(false)
+      }
+    }
+
+    "retrieve comments paging" in new Context {
+      val hasManyCommentsShortCode = "BacSjodhmaZ"
+      val mediaInfo: PostPageGraphql = Await.result(instagramService.getMediaInfo(hasManyCommentsShortCode), Duration.Inf).get
+      val pageInfo = mediaInfo.shortcodeMedia.edgeMediaToComment.pageInfo
+      Get(s"/instagram/media/shortcode/$hasManyCommentsShortCode/comments?afterCode=${pageInfo.endCursor.get}") ~> route ~> check {
+        responseAs[Option[MediaCommentQuery]].isEmpty should be(false)
+      }
+    }
+
   }
 
 }
