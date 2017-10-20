@@ -2,6 +2,8 @@
 
 ### Instagram
 
+Response `endCursor` can be used as `afterCode`.
+
 #### User
 
 - 1. To get user account info
@@ -14,8 +16,6 @@ ex) https://api.yabaiwebyasan.com/v1/instagram/users/i_do_not_like_fashion
 
 query option: afterCode
 
-use `1. To get user account info` response `id` and `endCursor`. `endCursor` can be used as `afterCode`.
-
 #### Tag
 
 - 1. To get hashtag info
@@ -27,9 +27,6 @@ ex) https://api.yabaiwebyasan.com/v1/instagram/tags/idonotlikefashion
     - https://api.yabaiwebyasan.com/v1/instagram/tags/:tagName/media
 
 query option: afterCode
-
-use `1. To get hashtag info` response `endCursor`. `endCursor` can be used as `afterCode`.
-
 
 #### Media
 
@@ -45,6 +42,3 @@ ex) https://api.yabaiwebyasan.com/v1/instagram/media/shortcode/BaczO1-BOdy
 
 query option: afterCode
 
-ex) https://api.yabaiwebyasan.com/v1/instagram/media/shortcode/BaczO1-BOdy/comments
-
-use response `endCursor`. `endCursor` can be used as `afterCode`.
