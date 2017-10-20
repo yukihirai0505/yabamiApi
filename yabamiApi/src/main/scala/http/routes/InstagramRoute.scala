@@ -44,6 +44,10 @@ class InstagramRoute(instagramService: InstagramService
           parameters('afterCode.as[String].?) { afterCode =>
             complete(getCommentPaging(shortcode, afterCode.getOrElse("")))
           }
+        } ~ path("shortcode" / Segment / "likes") { shortcode =>
+          parameters('afterCode.as[String].?) { afterCode =>
+            complete(getLikePaging(shortcode, afterCode.getOrElse("")))
+          }
         }
       }
     }

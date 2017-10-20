@@ -42,3 +42,10 @@ ex) https://api.yabaiwebyasan.com/v1/instagram/media/shortcode/BaczO1-BOdy
 
 query option: afterCode
 
+#### Like
+
+- 1. To get media likes
+    - https://api.yabaiwebyasan.com/v1/instagram/media/shortcode/:shortcode/likes
+
+query option: afterCode
+

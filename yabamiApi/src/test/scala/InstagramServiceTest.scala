@@ -21,6 +21,7 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
   val targetAccountName = "i_do_not_like_fashion"
   val targetTagName = "idonotlikefashion"
   var targetShortcode = "BaczO1-BOdy"
+  val hasManyCommentsShortCode = "BacSjodhmaZ"
 
   trait Context {
     val route = httpService.instagramRoute.route
@@ -64,11 +65,18 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
     }
 
     "retrieve comments paging" in new Context {
-      val hasManyCommentsShortCode = "BacSjodhmaZ"
       val mediaInfo: PostPageGraphql = Await.result(instagramService.getMediaInfo(hasManyCommentsShortCode), Duration.Inf).get
       val pageInfo = mediaInfo.shortcodeMedia.edgeMediaToComment.pageInfo
       Get(s"/instagram/media/shortcode/$hasManyCommentsShortCode/comments?afterCode=${pageInfo.endCursor.get}") ~> route ~> check {
         responseAs[Option[MediaCommentQuery]].isEmpty should be(false)
+      }
+    }
+
+    "retrieve likes paging" in new Context {
+      val likeInfo = Await.result(instagramService.getLikePaging(hasManyCommentsShortCode), Duration.Inf).get
+      val pageInfo = likeInfo.edgeLikedBy.pageInfo
+      Get(s"/instagram/media/shortcode/$hasManyCommentsShortCode/likes?afterCode=${pageInfo.endCursor.get}") ~> route ~> check {
+        responseAs[Option[LikeQueryShortcodeMedia]].isEmpty should be(false)
       }
     }
 

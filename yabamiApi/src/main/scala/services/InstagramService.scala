@@ -2,7 +2,7 @@ package services
 
 import com.typesafe.scalalogging.LazyLogging
 import com.yukihirai0505.iService.responses._
-import com.yukihirai0505.iService.services.{CommentService, MediaService, UserService}
+import com.yukihirai0505.iService.services.{CommentService, LikeService, MediaService, UserService}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -30,6 +30,10 @@ class InstagramService(implicit ec: ExecutionContextExecutor) extends LazyLoggin
 
   def getCommentPaging(shortcode: String, afterCode: String = ""): Future[Option[MediaCommentQuery]] = {
     toOptional(CommentService.getCommentsPaging(shortcode, size = 200, afterCode))
+  }
+
+  def getLikePaging(shortcode: String, afterCode: String = ""): Future[Option[LikeQueryShortcodeMedia]] = {
+    toOptional(LikeService.getLikePaging(shortcode, size = 200, afterCode))
   }
 
   private def toOptional[T](either: Future[Either[Throwable, T]]) = {
