@@ -1,86 +1,363 @@
 FORMAT: 1A
-# Group ユーザ
+# API Document
 
-## ユーザのエンドポイント [/v1/users]
+Response `endCursor` can be used as `afterCode`.
 
-### ユーザ登録 [POST]
+# Group Instagram User
 
-#### 処理概要
+ Instagram User
 
-* ユーザ情報を新しく登録する。
-* 登録に成功した場合、アクセストークンを返す。
+## Get User Account Info [/v1/instagram/users/{accountName}]
 
-+ Request (application/json)
+### Get User Info API [GET]
 
-    + Headers
+#### Summary
 
-            Accept: application/json
-
-    + Attributes
-        + email: test@example.com (string, required) - メールアドレス（format: email）
-        + password: abc123 (string, required) - パスワード（pattern: ^[0-9A-Za-z]{6,16}$）
-
-+ Response 201 (application/json)
-
-    + Attributes
-        + accessToken: f58ba22059f5a8aa8f346e0f40987adab326041fac99029c909bef2c6300821a (string, required) - アクセストークン
-
-
-## ユーザ情報取得 [/v1/groups/{groupId}/users{?userId,mailAddress}]
-
-### ユーザ情報取得API [GET]
-
-#### 処理概要  -- (2)
-
-* 指定した会員の情報を返す。
-* userIdかmailAddressいずれかは必須。どちらも指定がない場合、BadRequestを返す。
-* userIdとmailAddressがどちらも指定されている場合、userIdの情報を利用し、mailAddressは利用しない。
+* Get User Account Info
 
 + Parameters
 
-    + groupId: 11440002 (number, required) - ユーザが所属するグループID
-    + userId: 300 (number, optional) - ユーザID
-    + mailAddress: some@example.com (string, optional) - ユーザのメールアドレス
+    + accountName: i_do_not_like_fashion (string, required) - Instagram User Account Name
 
 + Response 200 (application/json)
 
     + Attributes
-        + user (required)  -- (4)
-            + name: wada (string, required) -- (5)
-            + age: 18 (number, required) -- (6)
-            + type: 0 (enum, required) - ユーザ種別(0:無料ユーザ, 1:有料ユーザ) -- (7)
-                + 0 (number)
-                + 1 (number)
-            + profile (object, required) -- (8)
-            + registered: `2015-06-11T08:40:51Z` (string, required)  -- (9)
-            + favorites (array) -- (10)
-            + `https://dev.classmethod.jp/` (string)
-            + messageHistory (array) -- (11)
+        + id: 6039196059 (string)
+        + followedBy (object)
+            + count: 167 (number)
+        + media (object)
+            + nodes (array)
                 + (object)
-                    + id: 22345 (number, required)
-                    + title: 今日の献立 (string, required)
-# Group メッセージ
+                    + commentsDisabled: false (boolean)
+                    + id: 1634458525801721216 (string)
+                    + dimensions (object)
+                        + height: 1080 (number)
+                        + width: 1080 (number)
+                    + owner (object)
+                        + id: 6039196059 (string)
+                    + thumbnailSrc: https://hogehoge.com (string)
+                    + isVideo: false (boolean)
+                    + code: Bauw16WhS2A (string)
+                    + date: 1509062661 (number)
+                    + displaySrc: https://hogehoge.com (string)
+                    + caption: hogehoge (string)
+                    + comments (object)
+                        + count: 2 (number)
+                    + likes (object)
+                        + count: 51 (number)
+                    + videoViews: 0 (number, optional)
+            + count (number)
+            + pageInfo (object)
+                + endCursor: hogehoge (string)
+                + hasNextPage: true (boolean)
 
-## メッセージのエンドポイント [/v1/messages]
+## Get User Media [/v1/instagram/users/{userId}/media{?afterCode}]
 
-### メッセージ登録 [POST]
+### Get User Media API [GET]
 
-#### 処理概要
+#### Summary
 
-* メッセージ情報を新しく登録する。
-* 登録に成功した場合、アクセストークンを返す。
+* Get User Media
 
-+ Request (application/json)
++ Parameters
 
-    + Headers
+    + userId: 6039196059 (string, required) - Instagram User Account Id
+    + afterCode: hogehoge (string, optional) - endCursor
 
-            Accept: application/json
++ Response 200 (application/json)
 
     + Attributes
-        + email: test@example.com (string, required) - メールアドレス（format: email）
-        + password: abc123 (string, required) - パスワード（pattern: ^[0-9A-Za-z]{6,16}$）
+        + data (object)
+            + user (object)
+                + edgeOwnerToTimelineMedia (object)
+                    + count: 21 (number)
+                    + pageInfo (object)
+                        + endCursor: hogehoge (string)
+                        + hasNextPage: false (boolean)
+                    + edges (array)
+                        + (object)
+                            + node (object)
+                                + commentsDisabled: false (boolean)
+                                + id: 1634458525801721216 (string)
+                                + thumbnailSrc: https://hogehoge.com (string)
+                                + takenAtTimestamp: 1509062661 (number)
+                                + displayUrl: https://hogehoge.com (string)
+                                + isVideo: false (boolean)
+                                + edgeMediaToCaption (object)
+                                    + edges (array)
+                                        + (object)
+                                            + node (object)
+                                                + text (string)
+                                + edgeMediaToComment (object)
+                                    + count: 2 (number)
+                                + dimensions (object)
+                                    + height: 1080 (number)
+                                    + width: 1080 (number)
+                                + edgeMediaPreviewLike (object)
+                                    + count: 2 (number)
+                                + owner (object)
+                                    + id: 6039196059 (string)
+        + status: ok (string)
+# Group Instagram Tag
 
-+ Response 201 (application/json)
+ Instagram Tag
+
+## Get Tag Info [/v1/instagram/tags/{tagName}]
+
+### Get Tag Info API [GET]
+
+#### Summary
+
+* Get Tag Info
+
++ Parameters
+
+    + tagName: idonotlikefashion (string, required) - Instagram HashTag Name
+
++ Response 200 (application/json)
 
     + Attributes
-        + accessToken: f58ba22059f5a8aa8f346e0f40987adab326041fac99029c909bef2c6300821a (string, required) - アクセストークン
+        + media (object)
+            + nodes (array)
+                + (object)
+                    + commentsDisabled: false (boolean)
+                    + id: 1634458525801721216 (string)
+                    + dimensions (object)
+                        + height: 1080 (number)
+                        + width: 1080 (number)
+                    + owner (object)
+                        + id: 6039196059 (string)
+                    + thumbnailSrc: https://hogehoge.com (string)
+                    + isVideo: false (boolean)
+                    + code: Bauw16WhS2A (string)
+                    + date: 1509062661 (number)
+                    + displaySrc: https://hogehoge.com (string)
+                    + caption: hogehoge (string)
+                    + comments (object)
+                        + count: 2 (number)
+                    + likes (object)
+                        + count: 51 (number)
+                    + videoViews: 0 (number, optional)
+            + count (number)
+            + pageInfo (object)
+                + endCursor: hogehoge (string)
+                + hasNextPage: true (boolean)
+        + topPosts (object)
+            + nodes (array)
+                + (object)
+                    + commentsDisabled: false (boolean)
+                    + id: 1634458525801721216 (string)
+                    + dimensions (object)
+                        + height: 1080 (number)
+                        + width: 1080 (number)
+                    + owner (object)
+                        + id: 6039196059 (string)
+                    + thumbnailSrc: https://hogehoge.com (string)
+                    + isVideo: false (boolean)
+                    + code: Bauw16WhS2A (string)
+                    + date: 1509062661 (number)
+                    + displaySrc: https://hogehoge.com (string)
+                    + caption: hogehoge (string)
+                    + comments (object)
+                        + count: 2 (number)
+                    + likes (object)
+                        + count: 51 (number)
+                    + videoViews: 0 (number, optional)
+
+## Get Tag Media [/v1/instagram/tags/{tagName}/media{?afterCode}]
+
+### Get Tag Media API [GET]
+
+#### Summary
+
+* Get Tag Media
+
++ Parameters
+
+    + tagName: idonotlikefashion (string, required) - Instagram HashTag Name
+    + afterCode: hogehoge (string, optional) - endCursor
+
++ Response 200 (application/json)
+
+    + Attributes
+        + data (object)
+            + hashtag (object)
+                + name: idonotlikefashion (string)
+                + edgeHashtagToMedia (object)
+                    + count: 21 (number)
+                    + pageInfo (object)
+                        + endCursor: hogehoge (string)
+                        + hasNextPage: false (boolean)
+                    + edges (array)
+                        + (object)
+                            + node (object)
+                                + commentsDisabled: false (boolean)
+                                + id: 1634458525801721216 (string)
+                                + shortcode: Bauw16WhS2A (string)
+                                + thumbnailSrc: https://hogehoge.com (string)
+                                + takenAtTimestamp: 1509062661 (number)
+                                + displayUrl: https://hogehoge.com (string)
+                                + isVideo: false (boolean)
+                                + edgeMediaToCaption (object)
+                                    + edges (array)
+                                        + (object)
+                                            + node (object)
+                                                + text (string)
+                                + edgeMediaToComment (object)
+                                    + count: 2 (number)
+                                + dimensions (object)
+                                    + height: 1080 (number)
+                                    + width: 1080 (number)
+                                + edgeLikedBy (object)
+                                    + count: 2 (number)
+                                + owner (object)
+                                    + id: 6039196059 (string)
+        + status: ok (string)
+# Group Instagram Media
+
+ Instagram Media
+
+
+## Get Media Info [/v1/instagram/media/shortcode/{shortcode}]
+
+### Get Media Info API [GET]
+
+#### Summary
+
+* Get Media Info
+
++ Parameters
+
+    + shortcode: Bauw16WhS2A (string, required) - Instagram shortcode
+
++ Response 200 (application/json)
+
+    + Attributes
+        + shortcodeMedia (object)
+            + id: 1634458525801721216 (string)
+            + shortcode: Bauw16WhS2A (string)
+            + dimensions (object)
+                + height: 1080 (number)
+                + width: 1080 (number)
+            + mediaPreview (string)
+            + displayUrl: https://hogehoge.com (string)
+            + isVideo: false (boolean)
+            + shouldLogClientEvent: false (boolean)
+            + trackingToken (string)
+            + edgeMediaToTaggedUser (object)
+                + edges (array)
+                    + (object)
+                        + node (object)
+                            + user (object)
+                                + username (string)
+                            + x: 0.703125 (number)
+                            + y: 0.9546875 (number)
+            + captionIsEdited: false (boolean)
+            + edgeMediaToComment (object)
+                + count: 3 (number)
+                + pageInfo (object)
+                    + endCursor: hogehoge (string)
+                    + hasNextPage: true (boolean)
+                + edges (array)
+                    + (object)
+                        + node (object)
+                            + id (string)
+                            + text (string)
+                            + createdAt (number)
+                            + owner (object)
+                                + id (string)
+                                + profilePicUrl (string)
+                                + username (string)
+            + commentsDisabled: false (boolean)
+            + takenAtTimestamp: 1509062661 (number)
+            + edgeMediaPreviewLike (object)
+                + count: 3 (number)
+                + edges (array)
+                    + (object)
+                        + node (object)
+                            + id (string)
+                            + profilePicUrl (string)
+                            + username (string)
+            + owner (object)
+                + id (string)
+                + profilePicUrl (string)
+                + username (string)
+                + blockedByViewer: false (boolean)
+                + followedByViewer: false (boolean)
+                + fullName (string)
+                + hasBlockedViewer: false (boolean)
+                + isPrivate: false (boolean)
+                + isUnpublished: false (boolean)
+                + isVerified: false (boolean)
+                + requestedByViewer: false (boolean)
+# Group Instagram Comment
+
+## Get Comment [/v1/instagram/media/shortcode/{shortcode}/comments{?afterCode}]
+
+### Get Comment API [GET]
+
+#### Summary
+
+* Get Comment
+
++ Parameters
+
+    + shortcode: Bauw16WhS2A (string, required) - Instagram shortcode
+    + afterCode: hogehoge (string, optional) - endCursor
+
++ Response 200 (application/json)
+
+    + Attributes
+        + data (object)
+            + shortcodeMedia (object)
+                + edgeMediaToComment (object)
+                    + count: 21 (number)
+                    + pageInfo (object)
+                        + endCursor: hogehoge (string)
+                        + hasNextPage: false (boolean)
+                    + edges (array)
+                        + (object)
+                            + node (object)
+                                + id: 1634458525801721216 (string)
+                                + text (string)
+                                + createdAt: 1509062661 (number)
+                                + owner (object)
+                                    + id: 6039196059 (string)
+                                    + profilePicUrl (string)
+                                    + username (string)
+        + status: ok (string)
+# Group Instagram Like
+
+## Get Like [/v1/instagram/media/shortcode/{shortcode}/likes{?afterCode}]
+
+### Get Like API [GET]
+
+#### Summary
+
+* Get Like
+
++ Parameters
+
+    + shortcode: Bauw16WhS2A (string, required) - Instagram shortcode
+    + afterCode: hogehoge (string, optional) - endCursor
+
++ Response 200 (application/json)
+
+    + Attributes
+        + id (string)
+        + shortcode (string)
+        + edgeLikedBy (object)
+            + count: 53 (number)
+            + pageInfo (object)
+                + endCursor: hogehoge (string)
+                + hasNextPage: false (boolean)
+            + edges (array)
+                + (object)
+                    + node (object)
+                        + id (string)
+                        + username (string)
+                        + fullName (string)
+                        + profilePicUrl (string)
+                        + isVerified: false (boolean)
+                        + followedByViewer: false (boolean)
+                        + requestedByViewer: false (boolean)

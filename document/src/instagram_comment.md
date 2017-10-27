@@ -1,6 +1,6 @@
 # Group Instagram Comment
 
-## Get Comment [/v1/instagram/media/shortcode/{shortcode}/likes{?afterCode}]
+## Get Comment [/v1/instagram/media/shortcode/{shortcode}/comments{?afterCode}]
 
 ### Get Comment API [GET]
 
