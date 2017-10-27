@@ -64,8 +64,6 @@
                         + count: 51 (number)
                     + videoViews: 0 (number, optional)
 
-
-
 ## Get Tag Media [/v1/instagram/tags/{tagName}/media{?afterCode}]
 
 ### Get Tag Media API [GET]
