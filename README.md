@@ -1,5 +1,9 @@
 ## yabai API
 
+API Document
+
+https://yukihirai0505.github.io/yabamiApi/document/output/api.html
+
 ### Instagram
 
 Response `endCursor` can be used as `afterCode`.
@@ -48,4 +52,3 @@ query option: afterCode
     - https://api.yabaiwebyasan.com/v1/instagram/media/shortcode/:shortcode/likes
 
 query option: afterCode
-
