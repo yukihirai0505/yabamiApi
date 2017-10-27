@@ -36,7 +36,7 @@ FORMAT: 1A
 * userIdかmailAddressいずれかは必須。どちらも指定がない場合、BadRequestを返す。
 * userIdとmailAddressがどちらも指定されている場合、userIdの情報を利用し、mailAddressは利用しない。
 
-+ Parameters  -- (3)
++ Parameters
 
     + groupId: 11440002 (number, required) - ユーザが所属するグループID
     + userId: 300 (number, optional) - ユーザID

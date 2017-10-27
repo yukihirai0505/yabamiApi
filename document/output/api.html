@@ -41,7 +41,7 @@
   "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
     <span class="hljs-string">"accessToken"</span>
   ]
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="ユーザ-ユーザ情報取得" class="resource"><h3 class="resource-heading">ユーザ情報取得 <a href="#ユーザ-ユーザ情報取得" class="permalink">&nbsp;&para;</a></h3><div id="ユーザ-ユーザ情報取得-get" class="action get"><h4 class="action-heading"><div class="name">ユーザ情報取得API</div><a href="#ユーザ-ユーザ情報取得-get" class="method get">GET</a><code class="uri">/v1/groups/users</code></h4><h4 id="header-処理概要-–-(2)">処理概要  – (2) <a class="permalink" href="#header-処理概要-–-(2)" aria-hidden="true">¶</a></h4>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="ユーザ-ユーザ情報取得" class="resource"><h3 class="resource-heading">ユーザ情報取得 <a href="#ユーザ-ユーザ情報取得" class="permalink">&nbsp;&para;</a></h3><div id="ユーザ-ユーザ情報取得-get" class="action get"><h4 class="action-heading"><div class="name">ユーザ情報取得API</div><a href="#ユーザ-ユーザ情報取得-get" class="method get">GET</a><code class="uri">/v1/groups/{groupId}/users{?userId,mailAddress}</code></h4><h4 id="header-処理概要-–-(2)">処理概要  – (2) <a class="permalink" href="#header-処理概要-–-(2)" aria-hidden="true">¶</a></h4>
 <ul>
 <li>
 <p>指定した会員の情報を返す。</p>
@@ -53,17 +53,10 @@
 <p>userIdとmailAddressがどちらも指定されている場合、userIdの情報を利用し、mailAddressは利用しない。</p>
 </li>
 </ul>
-<ul>
-<li>
-<p>Parameters  – (3)</p>
-<ul>
-<li>groupId: 11440002 (number, required) - ユーザが所属するグループID</li>
-<li>userId: 300 (number, optional) - ユーザID</li>
-<li>mailAddress: <a href="mailto:some@example.com">some@example.com</a> (string, optional) - ユーザのメールアドレス</li>
-</ul>
-</li>
-</ul>
-<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/v1/groups/users</span></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/v1/groups/<span class="hljs-attribute" title="groupId">11440002</span>/users?<span class="hljs-attribute">userId=</span><span class="hljs-literal">300</span>&<span class="hljs-attribute">mailAddress=</span><span class="hljs-literal">some@example.com</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>groupId</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>11440002</span></span><p>ユーザが所属するグループID</p>
+</dd><dt>userId</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>300</span></span><p>ユーザID</p>
+</dd><dt>mailAddress</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>some@example.com</span></span><p>ユーザのメールアドレス</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">user</span>": <span class="hljs-value">{
     "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"wada"</span></span>,
     "<span class="hljs-attribute">age</span>": <span class="hljs-value"><span class="hljs-number">18</span></span>,
