@@ -34,6 +34,8 @@ class InstagramRoute(instagramService: InstagramService
           parameters('afterCode.as[String].?) { afterCode =>
             complete(getTagPostsPaging(decode(tagName), afterCode.getOrElse("")).map(_.asJson))
           }
+        } ~ path("recommend" / Segment) { tagName =>
+          complete(getRecommendHashTag(tagName).map(_.asJson))
         }
       }
     } ~ pathPrefix("media") {

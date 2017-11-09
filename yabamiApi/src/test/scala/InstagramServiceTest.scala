@@ -18,7 +18,7 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
     */
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(10.second)
 
-  val targetAccountName = "i_do_not_like_fashion"
+  val targetAccountName = "i_do_not_like_holidays"
   val targetTagName = "idonotlikefashion"
   var targetShortcode = "BaczO1-BOdy"
   val hasManyCommentsShortCode = "BacSjodhmaZ"
@@ -55,6 +55,12 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
       val pageInfo = tagInfo.media.pageInfo
       Get(s"/instagram/tags/$hasManyPostsHashTag/media?afterCode=${pageInfo.endCursor.get}") ~> route ~> check {
         responseAs[Option[MediaQuery]].isEmpty should be(false)
+      }
+    }
+
+    "retrieve tag recommend" in new Context {
+      Get("/instagram/tags/recommend/cafe") ~> route ~> check {
+        responseAs[Seq[String]].isEmpty should be(false)
       }
     }
 
