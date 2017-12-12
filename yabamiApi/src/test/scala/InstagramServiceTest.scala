@@ -18,7 +18,7 @@ class InstagramServiceTest extends BaseServiceTest with ScalaFutures {
     */
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(10.second)
 
-  val targetAccountName = "i_do_not_like_holidays"
+  val targetAccountName = "yabaiwebyasan"
   val targetTagName = "idonotlikefashion"
   var targetShortcode = "BaczO1-BOdy"
   val hasManyCommentsShortCode = "BacSjodhmaZ"
