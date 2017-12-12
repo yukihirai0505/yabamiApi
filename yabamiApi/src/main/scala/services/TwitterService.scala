@@ -1,5 +1,6 @@
 package services
 
+
 import com.danielasfregola.twitter4s.entities.Tweet
 import configurations.TwitterConfig
 import models.db.TweetsEntityTable

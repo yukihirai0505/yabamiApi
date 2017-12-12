@@ -1,12 +1,15 @@
 import akka.actor.ActorSystem
 import akka.http.scaladsl.testkit.RouteTestTimeout
 import io.circe.generic.auto._
-import models.TweetEntity
+import models.{Page, TweetEntity}
 import org.scalatest.concurrent.ScalaFutures
 
 import scala.concurrent.duration._
 
+
 class TwitterServiceTest extends BaseServiceTest with ScalaFutures { // this import is necessary for unmarshalling
+
+  import twitterService._
 
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(10.second)
 
@@ -18,7 +21,7 @@ class TwitterServiceTest extends BaseServiceTest with ScalaFutures { // this imp
 
     "retrieve tweets" in new Context {
       Get(s"/twitter/tweets") ~> route ~> check {
-        responseAs[Seq[TweetEntity]].isEmpty should be(false)
+        responseAs[Page[TweetEntity]].list.isEmpty should be(false)
       }
     }
 
