@@ -26,7 +26,6 @@ libraryDependencies ++= {
     "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
 
     "com.zaxxer" % "HikariCP" % "2.4.5",
-    "org.slf4j" % "slf4j-nop" % "1.6.4",
 
     "io.circe" %% "circe-core" % circeV,
     "io.circe" %% "circe-generic" % circeV,
