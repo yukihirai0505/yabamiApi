@@ -8,7 +8,7 @@ import services.TwitterService
 
 import scala.concurrent.ExecutionContextExecutor
 
-class twitterRoute(twitterService: TwitterService
+class TwitterRoute(twitterService: TwitterService
                   )(implicit ec: ExecutionContextExecutor) extends CirceSupport {
 
   import twitterService._

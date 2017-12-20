@@ -11,17 +11,20 @@ import scala.concurrent.ExecutionContextExecutor
 
 class HttpService(
                    instagramService: InstagramService,
-                   twitterService: TwitterService
+                   twitterService: TwitterService,
+                   tradeService: TradeService
                  )(implicit ec: ExecutionContextExecutor, actorSystem: ActorSystem, materializer: ActorMaterializer) extends CorsSupport {
 
   val instagramRoute = new InstagramRoute(instagramService)
-  val twitterRoute = new twitterRoute(twitterService)
+  val twitterRoute = new TwitterRoute(twitterService)
+  val tradeRoute = new TradeRoute(tradeService)
 
   val routes =
     pathPrefix("v1") {
       corsHandler {
         instagramRoute.route ~
-          twitterRoute.route
+          twitterRoute.route ~
+          tradeRoute.route
       }
     }
 

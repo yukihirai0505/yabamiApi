@@ -5,7 +5,8 @@ scalaVersion := "2.11.7"
 assemblyOutputPath in assembly := file("./api-standalone.jar")
 
 libraryDependencies ++= {
-  val akkaV = "10.0.7"
+  val akkaV = "10.0.10"
+  val akkaStreamV = "2.5.4"
   val slickVersion = "3.2.0-M2"
   val circeV = "0.6.1"
   val scalaTestV = "3.0.1"
@@ -16,6 +17,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-core" % akkaV,
     "com.typesafe.akka" %% "akka-http" % akkaV,
     "de.heikoseeberger" %% "akka-http-circe" % "1.11.0",
+    "com.typesafe.akka" %% "akka-http-spray-json" % akkaV,
+    "com.typesafe.akka" %% "akka-stream" % akkaStreamV,
 
     // DB
     "com.typesafe.slick" %% "slick" % slickVersion,

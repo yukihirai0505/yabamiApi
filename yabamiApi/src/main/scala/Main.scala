@@ -22,10 +22,12 @@ object Main extends App with Config {
 
   val instagramService = new InstagramService()
   val twitterService = new TwitterService(databaseService)
+  val tradeService = new TradeService()
 
   val httpService = new HttpService(
     instagramService,
-    twitterService
+    twitterService,
+    tradeService
   )
 
   Http().bindAndHandle(httpService.routes, httpHost, httpPort)

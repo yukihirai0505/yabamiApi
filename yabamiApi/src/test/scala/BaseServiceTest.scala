@@ -1,3 +1,4 @@
+import Main.{instagramService, twitterService}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import de.heikoseeberger.akkahttpcirce.CirceSupport
 import http.HttpService
@@ -13,9 +14,12 @@ trait BaseServiceTest extends WordSpec with Matchers with ScalatestRouteTest wit
   private val databaseService = new DatabaseService(jdbcUrl, dbUser, dbPassword)
   val twitterService = new TwitterService(databaseService)
   val instagramService = new InstagramService()
+  val tradeService = new TradeService()
+
   val httpService = new HttpService(
     instagramService,
-    twitterService
+    twitterService,
+    tradeService
   )
 
 }
