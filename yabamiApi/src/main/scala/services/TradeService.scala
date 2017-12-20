@@ -20,20 +20,24 @@ class TradeService()(
   val BTC_STR = "BTC"
   val BNB_STR = "BNB"
 
-  case class CurrencyResponse(name: String, price: String, canTrex: Boolean, canPolo: Boolean)
+  case class CurrencyResponse(name: String, price: String, yen: String, canTrex: Boolean, canPolo: Boolean)
 
   def getCurrencies: Future[Seq[CurrencyResponse]] = {
     requestBinanceAPI.flatMap { binanceCurrencies =>
       requestBittrexAPI.flatMap { bittrexCurrencies =>
         requestPoloniexAPI.flatMap { poloniexCurrencies =>
-          Future successful binanceCurrencies.map(c =>
-            CurrencyResponse(
-              c.symbol,
-              c.price,
-              canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
-              canPolo = poloniexCurrencies.get(c.symbol).isDefined
+          requestBitFlyerAPI.flatMap { bitFlyerPrice =>
+            Future successful binanceCurrencies.map(c =>
+              CurrencyResponse(
+                c.symbol,
+                c.price,
+                BigDecimal(bitFlyerPrice.mid * c.price.toDouble)
+                  .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+                canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
+                canPolo = poloniexCurrencies.get(c.symbol).isDefined
+              )
             )
-          )
+          }
         }
       }
     }
@@ -64,6 +68,15 @@ class TradeService()(
       Unmarshal(response.entity).to[String].flatMap { res =>
         logger.info("requestPoloniexAPI", res)
         Future successful res.parseJson.asJsObject.fields
+      }
+    }
+  }
+
+  private def requestBitFlyerAPI = {
+    request("bitflyer.jp", HttpRequest(uri = "https://bitflyer.jp/api/echo/price")).flatMap { response =>
+      Unmarshal(response.entity).to[String].flatMap { res =>
+        logger.info("requestBitFlyerAPI", res)
+        Future successful res.parseJson.convertTo[BitFlyerPrice]
       }
     }
   }
