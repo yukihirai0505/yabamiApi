@@ -19,6 +19,7 @@ class TradeService()(
 
   val BTC_STR = "BTC"
   val BNB_STR = "BNB"
+  val USDT_STR = "USDT"
 
   case class CurrencyResponse(name: String, price: String, yen: String, canTrex: Boolean, canPolo: Boolean)
 
@@ -48,7 +49,7 @@ class TradeService()(
       Unmarshal(response.entity).to[String].flatMap { res =>
         logger.info("requestBinanceAPI", res)
         Future successful res.parseJson.convertTo[Seq[BinanceCurrency]]
-          .filter(c => c.symbol.contains(BTC_STR) && !c.symbol.contains(BNB_STR))
+          .filter(c => c.symbol.contains(BTC_STR) && !c.symbol.contains(BNB_STR) && !c.symbol.contains(USDT_STR))
           .map(c => c.copy(symbol = c.symbol.replace(BTC_STR, "")))
       }
     }
