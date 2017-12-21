@@ -16,7 +16,15 @@ class TradeRoute(tradeService: TradeService
 
   val route = pathPrefix("currencies") {
     get {
-      complete(getCurrencies.map(_.asJson))
+      pathPrefix("binance") {
+        complete(getBinanceCurrencies.map(_.asJson))
+      } ~ pathPrefix("hitbtc") {
+        complete(getHitBTCCurrencies.map(_.asJson))
+      } ~ pathPrefix("cryptopia") {
+        complete(getCryptopiaCurrencies.map(_.asJson))
+      } ~ pathPrefix("stocks") {
+        complete(getStocksCurrencies.map(_.asJson))
+      }
     }
   }
 

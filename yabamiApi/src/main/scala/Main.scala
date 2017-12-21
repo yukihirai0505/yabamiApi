@@ -1,4 +1,3 @@
-import Main.{dbPassword, dbUser, jdbcUrl}
 import akka.actor.ActorSystem
 import akka.event.{Logging, LoggingAdapter}
 import akka.http.scaladsl.Http
