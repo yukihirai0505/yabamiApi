@@ -18,9 +18,13 @@ class TradeService()(
 ) extends JsonSupport {
 
   val BTC_STR = "BTC"
+  val BCH_STR = "BCH"
+  val BCC_STR = "BCC"
   val BNB_STR = "BNB"
   val USD_STR = "USD"
-  val USDT_STR = "USDT"
+  val NG_STR = Seq(
+    BCH_STR, BCC_STR, BNB_STR, USD_STR
+  )
 
   case class BinanceCurrenciesResponse(name: String, price: String, yen: String, canTrex: Boolean, canPolo: Boolean)
 
@@ -143,7 +147,7 @@ class TradeService()(
         logger.info("requestBinanceAPI", res)
         Future successful res.parseJson.convertTo[Seq[BinanceCurrency]]
           .filter(c =>
-            c.symbol.contains(BTC_STR) && !c.symbol.contains(BNB_STR) && !c.symbol.contains(USDT_STR) && !c.symbol.contains(USD_STR)
+            c.symbol.contains(BTC_STR) && !NG_STR.exists(c.symbol.contains(_))
           )
           .map(c => c.copy(symbol = c.symbol.replace(BTC_STR, "")))
       }
@@ -174,7 +178,7 @@ class TradeService()(
         logger.info("requestHitBTCAPI", res)
         Future successful res.parseJson.convertTo[Seq[HitBTCCurrency]]
           .filter(c =>
-            c.symbol.contains(BTC_STR) && !c.symbol.contains(USDT_STR) && !c.symbol.contains(USD_STR)
+            c.symbol.contains(BTC_STR) && !NG_STR.exists(c.symbol.contains(_))
           )
           .map(c => c.copy(symbol = c.symbol.replace(BTC_STR, "")))
       }
@@ -187,7 +191,7 @@ class TradeService()(
         logger.info("requestCryptopiaAPI", res)
         Future successful res.parseJson.convertTo[CryptopiaCurrencies].Data
           .filter(c =>
-            c.Label.contains(BTC_STR) && !c.Label.contains(USDT_STR) && !c.Label.contains(USD_STR)
+            c.Label.contains(s"/$BTC_STR") && !NG_STR.exists(c.Label.contains(_))
           )
           .map(c => c.copy(Label = c.Label.replace(s"/$BTC_STR", "")))
       }
@@ -200,7 +204,7 @@ class TradeService()(
         logger.info("requestStocksAPI", res)
         Future successful res.parseJson.convertTo[Seq[StocksCurrency]]
           .filter(c =>
-            c.market_name.contains(BTC_STR) && !c.market_name.contains(USDT_STR) && !c.market_name.contains(USD_STR)
+            c.market_name.contains(s"_$BTC_STR") && !NG_STR.exists(c.market_name.contains(_))
           )
           .map(c => c.copy(market_name = c.market_name.replace(s"_$BTC_STR", "")))
       }
