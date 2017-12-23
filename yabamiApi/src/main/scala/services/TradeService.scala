@@ -28,9 +28,9 @@ class TradeService()(
 
   case class BinanceCurrenciesResponse(name: String, price: String, yen: String, canTrex: Boolean, canPolo: Boolean)
 
-  case class HitBTCCurrenciesResponse(name: String, price: String, yen: String, canBinance: Boolean, canTrex: Boolean, canPolo: Boolean)
+  case class HitBTCCurrenciesResponse(name: String, price: Option[String], yen: Option[String], canBinance: Boolean, canTrex: Boolean, canPolo: Boolean)
 
-  case class CryptopiaCurrenciesResponse(name: String, price: String, yen: String, canBinance: Boolean, canTrex: Boolean, canPolo: Boolean)
+  case class CryptopiaCurrenciesResponse(name: String, price: Option[String], yen: Option[String], canBinance: Boolean, canTrex: Boolean, canPolo: Boolean)
 
   case class StocksCurrenciesResponse(name: String, buy: String, buyYen: String, sell: String, sellYen: String, canBinance: Boolean, canTrex: Boolean, canPolo: Boolean)
 
@@ -74,8 +74,8 @@ class TradeService()(
           HitBTCCurrenciesResponse(
             c.symbol,
             c.last,
-            BigDecimal(bitFlyerPrice.mid * c.last.toDouble)
-              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+            c.last.map(price => BigDecimal(bitFlyerPrice.mid * price.toDouble)
+              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString),
             canBinance = binanceCurrencies.exists(_.symbol == c.symbol),
             canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
             canPolo = poloniexCurrencies.get(c.symbol).isDefined
@@ -99,9 +99,10 @@ class TradeService()(
         Future successful cryptopia.map(c =>
           CryptopiaCurrenciesResponse(
             c.Label,
-            c.LastPrice.toString,
-            BigDecimal(bitFlyerPrice.mid * c.LastPrice)
-              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+            c.LastPrice.map(_.toString),
+            c.LastPrice.map(price => BigDecimal(bitFlyerPrice.mid * price)
+              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString
+            ),
             canBinance = binanceCurrencies.exists(_.symbol == c.Label),
             canTrex = bittrexCurrencies.result.exists(_.Currency == c.Label),
             canPolo = poloniexCurrencies.get(c.Label).isDefined
