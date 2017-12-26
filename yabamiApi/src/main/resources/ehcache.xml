@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+    <cache name="binance"
+           maxEntriesLocalHeap="0"
+           timeToLiveSeconds="1800">
+    </cache>
+
+    <cache name="hitbtc"
+           maxEntriesLocalHeap="0"
+           timeToLiveSeconds="1800">
+    </cache>
+
+    <cache name="cryptopia"
+           maxEntriesLocalHeap="0"
+           timeToLiveSeconds="1800">
+    </cache>
+
+    <cache name="stocks"
+           maxEntriesLocalHeap="0"
+           timeToLiveSeconds="1800">
+    </cache>
+</ehcache>

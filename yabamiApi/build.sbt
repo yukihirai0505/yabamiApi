@@ -47,6 +47,9 @@ libraryDependencies ++= {
     "joda-time" % "joda-time" % "2.9.3",
     "org.joda" % "joda-convert" % "1.8.1",
 
+    // Cache
+    "net.sf.ehcache" % "ehcache" % "2.10.0",
+
     "org.scalatest" %% "scalatest" % scalaTestV % "test",
     "com.typesafe.akka" %% "akka-http-testkit" % akkaV % "test"
   )

@@ -8,6 +8,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Sink, Source}
 import models.JsonSupport
 import spray.json._
+import utils.{Cache, CacheKey}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,111 +36,127 @@ class TradeService()(
   case class StocksCurrenciesResponse(name: String, buy: String, buyYen: String, sell: String, sellYen: String, canBinance: Boolean, canTrex: Boolean, canPolo: Boolean)
 
   def getBinanceCurrencies: Future[Seq[BinanceCurrenciesResponse]] = {
-    val currencies = for {
-      binance <- requestBinanceAPI
-      bittrex <- requestBittrexAPI
-      poloniex <- requestPoloniexAPI
-      bitFlyer <- requestBitFlyerAPI
-    } yield {
-      (binance, bittrex, poloniex, bitFlyer)
-    }
-    currencies.flatMap {
-      case (binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
-        Future successful binanceCurrencies.map(c =>
-          BinanceCurrenciesResponse(
-            c.symbol,
-            c.price,
-            BigDecimal(bitFlyerPrice.mid * c.price.toDouble)
-              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
-            canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
-            canPolo = poloniexCurrencies.get(c.symbol).isDefined
+    def getCurrencies() = {
+      val currencies = for {
+        binance <- requestBinanceAPI
+        bittrex <- requestBittrexAPI
+        poloniex <- requestPoloniexAPI
+        bitFlyer <- requestBitFlyerAPI
+      } yield {
+        (binance, bittrex, poloniex, bitFlyer)
+      }
+      currencies.flatMap {
+        case (binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
+          Future successful binanceCurrencies.map(c =>
+            BinanceCurrenciesResponse(
+              c.symbol,
+              c.price,
+              BigDecimal(bitFlyerPrice.mid * c.price.toDouble)
+                .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+              canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
+              canPolo = poloniexCurrencies.get(c.symbol).isDefined
+            )
           )
-        )
+      }
     }
+
+    cacheAction[Seq[BinanceCurrenciesResponse]](CacheKey.binance, getCurrencies)
   }
 
   def getHitBTCCurrencies: Future[Seq[HitBTCCurrenciesResponse]] = {
-    val currencies = for {
-      hitbtc <- requestHitBTCAPI
-      binance <- requestBinanceAPI
-      bittrex <- requestBittrexAPI
-      poloniex <- requestPoloniexAPI
-      bitFlyer <- requestBitFlyerAPI
-    } yield {
-      (hitbtc, binance, bittrex, poloniex, bitFlyer)
-    }
-    currencies.flatMap {
-      case (hitbtc, binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
-        Future successful hitbtc.map(c =>
-          HitBTCCurrenciesResponse(
-            c.symbol,
-            c.last,
-            c.last.map(price => BigDecimal(bitFlyerPrice.mid * price.toDouble)
-              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString),
-            canBinance = binanceCurrencies.exists(_.symbol == c.symbol),
-            canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
-            canPolo = poloniexCurrencies.get(c.symbol).isDefined
+    def getCurrencies() = {
+      val currencies = for {
+        hitbtc <- requestHitBTCAPI
+        binance <- requestBinanceAPI
+        bittrex <- requestBittrexAPI
+        poloniex <- requestPoloniexAPI
+        bitFlyer <- requestBitFlyerAPI
+      } yield {
+        (hitbtc, binance, bittrex, poloniex, bitFlyer)
+      }
+      currencies.flatMap {
+        case (hitbtc, binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
+          Future successful hitbtc.map(c =>
+            HitBTCCurrenciesResponse(
+              c.symbol,
+              c.last,
+              c.last.map(price => BigDecimal(bitFlyerPrice.mid * price.toDouble)
+                .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString),
+              canBinance = binanceCurrencies.exists(_.symbol == c.symbol),
+              canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
+              canPolo = poloniexCurrencies.get(c.symbol).isDefined
+            )
           )
-        )
+      }
     }
+
+    cacheAction[Seq[HitBTCCurrenciesResponse]](CacheKey.hitbtc, getCurrencies)
   }
 
   def getCryptopiaCurrencies: Future[Seq[CryptopiaCurrenciesResponse]] = {
-    val currencies = for {
-      cryptopia <- requestCryptopiaAPI
-      binance <- requestBinanceAPI
-      bittrex <- requestBittrexAPI
-      poloniex <- requestPoloniexAPI
-      bitFlyer <- requestBitFlyerAPI
-    } yield {
-      (cryptopia, binance, bittrex, poloniex, bitFlyer)
-    }
-    currencies.flatMap {
-      case (cryptopia, binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
-        Future successful cryptopia.map(c =>
-          CryptopiaCurrenciesResponse(
-            c.Label,
-            c.LastPrice.map(_.toString),
-            c.LastPrice.map(price => BigDecimal(bitFlyerPrice.mid * price)
-              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString
-            ),
-            canBinance = binanceCurrencies.exists(_.symbol == c.Label),
-            canTrex = bittrexCurrencies.result.exists(_.Currency == c.Label),
-            canPolo = poloniexCurrencies.get(c.Label).isDefined
+    def getCurrencies() = {
+      val currencies = for {
+        cryptopia <- requestCryptopiaAPI
+        binance <- requestBinanceAPI
+        bittrex <- requestBittrexAPI
+        poloniex <- requestPoloniexAPI
+        bitFlyer <- requestBitFlyerAPI
+      } yield {
+        (cryptopia, binance, bittrex, poloniex, bitFlyer)
+      }
+      currencies.flatMap {
+        case (cryptopia, binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
+          Future successful cryptopia.map(c =>
+            CryptopiaCurrenciesResponse(
+              c.Label,
+              c.LastPrice.map(_.toString),
+              c.LastPrice.map(price => BigDecimal(bitFlyerPrice.mid * price)
+                .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString
+              ),
+              canBinance = binanceCurrencies.exists(_.symbol == c.Label),
+              canTrex = bittrexCurrencies.result.exists(_.Currency == c.Label),
+              canPolo = poloniexCurrencies.get(c.Label).isDefined
+            )
           )
-        )
+      }
     }
+
+    cacheAction[Seq[CryptopiaCurrenciesResponse]](CacheKey.cryptopia, getCurrencies)
   }
 
   def getStocksCurrencies: Future[Seq[StocksCurrenciesResponse]] = {
-    val currencies = for {
-      stocks <- requestStocksAPI
-      binance <- requestBinanceAPI
-      bittrex <- requestBittrexAPI
-      poloniex <- requestPoloniexAPI
-      bitFlyer <- requestBitFlyerAPI
-    } yield {
-      (stocks, binance, bittrex, poloniex, bitFlyer)
+    def getCurrencies() = {
+      val currencies = for {
+        stocks <- requestStocksAPI
+        binance <- requestBinanceAPI
+        bittrex <- requestBittrexAPI
+        poloniex <- requestPoloniexAPI
+        bitFlyer <- requestBitFlyerAPI
+      } yield {
+        (stocks, binance, bittrex, poloniex, bitFlyer)
+      }
+      currencies.flatMap {
+        case (stocks, binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
+          Future successful stocks.map { c =>
+            val buy = c.buy.toString().replaceAll("\"", "")
+            val sell = c.sell.toString().replaceAll("\"", "")
+            StocksCurrenciesResponse(
+              c.market_name,
+              buy,
+              BigDecimal(bitFlyerPrice.mid * buy.toDouble)
+                .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+              sell,
+              BigDecimal(bitFlyerPrice.mid * sell.toDouble)
+                .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+              canBinance = binanceCurrencies.exists(_.symbol == c.market_name),
+              canTrex = bittrexCurrencies.result.exists(_.Currency == c.market_name),
+              canPolo = poloniexCurrencies.get(c.market_name).isDefined
+            )
+          }
+      }
     }
-    currencies.flatMap {
-      case (stocks, binanceCurrencies, bittrexCurrencies, poloniexCurrencies, bitFlyerPrice) =>
-        Future successful stocks.map { c =>
-          val buy = c.buy.toString().replaceAll("\"", "")
-          val sell = c.sell.toString().replaceAll("\"", "")
-          StocksCurrenciesResponse(
-            c.market_name,
-            buy,
-            BigDecimal(bitFlyerPrice.mid * buy.toDouble)
-              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
-            sell,
-            BigDecimal(bitFlyerPrice.mid * sell.toDouble)
-              .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
-            canBinance = binanceCurrencies.exists(_.symbol == c.market_name),
-            canTrex = bittrexCurrencies.result.exists(_.Currency == c.market_name),
-            canPolo = poloniexCurrencies.get(c.market_name).isDefined
-          )
-        }
-    }
+
+    cacheAction[Seq[StocksCurrenciesResponse]](CacheKey.stocks, getCurrencies)
   }
 
   private def requestBinanceAPI = {
@@ -227,5 +244,15 @@ class TradeService()(
       .via(http.outgoingConnectionHttps(host = host))
       .runWith(Sink.head)
     responseFuture
+  }
+
+  private def cacheAction[T](key: String, getCurrencies: () => Future[T]): Future[T] = {
+    Cache.get[T](key) match {
+      case Some(value) => Future successful value
+      case _ => getCurrencies().flatMap { res =>
+        Cache.put(key, res)
+        Future successful res
+      }
+    }
   }
 }
