@@ -6,7 +6,14 @@ import spray.json.{DefaultJsonProtocol, JsValue}
 
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol with LazyLogging {
 
-  protected case class BitFlyerPrice(ask: Double, bid: Double, mid: Double)
+  protected case class BitFlyerPrice(ltp: Double)
+
+  protected case class CoincheckPrice(last: Double)
+
+  protected case class ZaifPrice(last_price: Double)
+
+  protected case class BtcToJpy(bitflyer: String, coincheck: String, zaif: String)
+  protected case class JpyToBtc(bitflyer: String, coincheck: String, zaif: String)
 
   protected case class BinanceCurrency(symbol: String, price: String)
 
@@ -22,7 +29,11 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol with LazyLog
 
   protected case class StocksCurrency(market_name: String, buy: JsValue, sell: JsValue)
 
-  implicit val BitFlyerPriceFormat = jsonFormat3(BitFlyerPrice)
+  implicit val BitFlyerPriceFormat = jsonFormat1(BitFlyerPrice)
+  implicit val CoincheckPriceFormat = jsonFormat1(CoincheckPrice)
+  implicit val ZaifPriceFormat = jsonFormat1(ZaifPrice)
+  implicit val BtcToJpyFormat = jsonFormat3(BtcToJpy)
+  implicit val JpyToBtcFormat = jsonFormat3(JpyToBtc)
   implicit val BinanceCurrencyFormat = jsonFormat2(BinanceCurrency)
   implicit val BittrexCurrencyFormat = jsonFormat2(BittrexCurrency)
   implicit val BittrexCurrenciesFormat = jsonFormat1(BittrexCurrencies)

@@ -51,7 +51,7 @@ class TradeService()(
             BinanceCurrenciesResponse(
               c.symbol,
               c.price,
-              BigDecimal(bitFlyerPrice.mid * c.price.toDouble)
+              BigDecimal(bitFlyerPrice.ltp * c.price.toDouble)
                 .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
               canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
               canPolo = poloniexCurrencies.get(c.symbol).isDefined
@@ -80,7 +80,7 @@ class TradeService()(
             HitBTCCurrenciesResponse(
               c.symbol,
               c.last,
-              c.last.map(price => BigDecimal(bitFlyerPrice.mid * price.toDouble)
+              c.last.map(price => BigDecimal(bitFlyerPrice.ltp * price.toDouble)
                 .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString),
               canBinance = binanceCurrencies.exists(_.symbol == c.symbol),
               canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
@@ -110,7 +110,7 @@ class TradeService()(
             CryptopiaCurrenciesResponse(
               c.Label,
               c.LastPrice.map(_.toString),
-              c.LastPrice.map(price => BigDecimal(bitFlyerPrice.mid * price)
+              c.LastPrice.map(price => BigDecimal(bitFlyerPrice.ltp * price)
                 .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString
               ),
               canBinance = binanceCurrencies.exists(_.symbol == c.Label),
@@ -143,10 +143,10 @@ class TradeService()(
             StocksCurrenciesResponse(
               c.market_name,
               buy,
-              BigDecimal(bitFlyerPrice.mid * buy.toDouble)
+              BigDecimal(bitFlyerPrice.ltp * buy.toDouble)
                 .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
               sell,
-              BigDecimal(bitFlyerPrice.mid * sell.toDouble)
+              BigDecimal(bitFlyerPrice.ltp * sell.toDouble)
                 .setScale(4, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
               canBinance = binanceCurrencies.exists(_.symbol == c.market_name),
               canTrex = bittrexCurrencies.result.exists(_.Currency == c.market_name),
@@ -157,6 +157,42 @@ class TradeService()(
     }
 
     cacheAction[Seq[StocksCurrenciesResponse]](CacheKey.stocks, getCurrencies)
+  }
+
+  def btcToJpy(btc: Double): Future[BtcToJpy] = {
+    val prices = for {
+      bitFlyer <- requestBitFlyerAPI
+      coincheck <- requestCoincheckAPI
+      zaif <- requestZaifAPI
+    } yield {
+      (bitFlyer, coincheck, zaif)
+    }
+    prices.flatMap {
+      case (bitFlyer, coincheck, zaif) =>
+        Future successful BtcToJpy(
+          (bitFlyer.ltp * btc).toString,
+          (coincheck.last * btc).toString,
+          (zaif.last_price * btc).toString
+        )
+    }
+  }
+
+  def jpyToBtc(jpy: Double): Future[JpyToBtc] = {
+    val prices = for {
+      bitFlyer <- requestBitFlyerAPI
+      coincheck <- requestCoincheckAPI
+      zaif <- requestZaifAPI
+    } yield {
+      (bitFlyer, coincheck, zaif)
+    }
+    prices.flatMap {
+      case (bitFlyer, coincheck, zaif) =>
+        Future successful JpyToBtc(
+          (jpy / bitFlyer.ltp).toString,
+          (jpy / coincheck.last).toString,
+          (jpy / zaif.last_price).toString
+        )
+    }
   }
 
   private def requestBinanceAPI = {
@@ -230,10 +266,28 @@ class TradeService()(
   }
 
   private def requestBitFlyerAPI = {
-    request("bitflyer.jp", HttpRequest(uri = "https://bitflyer.jp/api/echo/price")).flatMap { response =>
+    request("api.bitflyer.jp", HttpRequest(uri = "https://api.bitflyer.jp/v1/getticker")).flatMap { response =>
       Unmarshal(response.entity).to[String].flatMap { res =>
         logger.info("requestBitFlyerAPI", res)
         Future successful res.parseJson.convertTo[BitFlyerPrice]
+      }
+    }
+  }
+
+  private def requestCoincheckAPI = {
+    request("coincheck.com", HttpRequest(uri = "https://coincheck.com/api/ticker")).flatMap { response =>
+      Unmarshal(response.entity).to[String].flatMap { res =>
+        logger.info("requestCoincheckAPI", res)
+        Future successful res.parseJson.convertTo[CoincheckPrice]
+      }
+    }
+  }
+
+  private def requestZaifAPI = {
+    request("api.zaif.jp", HttpRequest(uri = "https://api.zaif.jp/api/1/last_price/btc_jpy")).flatMap { response =>
+      Unmarshal(response.entity).to[String].flatMap { res =>
+        logger.info("requestZaifAPI", res)
+        Future successful res.parseJson.convertTo[ZaifPrice]
       }
     }
   }

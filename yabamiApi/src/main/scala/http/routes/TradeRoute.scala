@@ -24,6 +24,16 @@ class TradeRoute(tradeService: TradeService
         complete(getCryptopiaCurrencies.map(_.asJson))
       } ~ pathPrefix("stocks") {
         complete(getStocksCurrencies.map(_.asJson))
+      } ~ pathPrefix("convert") {
+        pathPrefix("btc-to-jpy") {
+          parameters('btc.as[Double]) { (btc) =>
+            complete(btcToJpy(btc))
+          }
+        } ~ pathPrefix("jpy-to-btc") {
+          parameters('jpy.as[Double]) { (jpy) =>
+            complete(jpyToBtc(jpy))
+          }
+        }
       }
     }
   }
