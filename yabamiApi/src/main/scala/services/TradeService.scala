@@ -170,9 +170,12 @@ class TradeService()(
     prices.flatMap {
       case (bitFlyer, coincheck, zaif) =>
         Future successful BtcToJpy(
-          (bitFlyer.ltp * btc).toString,
-          (coincheck.last * btc).toString,
-          (zaif.last_price * btc).toString
+          BigDecimal(bitFlyer.ltp * btc)
+            .setScale(8, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+          BigDecimal(coincheck.last * btc)
+            .setScale(8, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+          BigDecimal(zaif.last_price * btc)
+            .setScale(8, scala.math.BigDecimal.RoundingMode.HALF_UP).toString
         )
     }
   }
@@ -188,9 +191,12 @@ class TradeService()(
     prices.flatMap {
       case (bitFlyer, coincheck, zaif) =>
         Future successful JpyToBtc(
-          (jpy / bitFlyer.ltp).toString,
-          (jpy / coincheck.last).toString,
-          (jpy / zaif.last_price).toString
+          BigDecimal(jpy / bitFlyer.ltp)
+            .setScale(8, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+          BigDecimal(jpy / coincheck.last)
+            .setScale(8, scala.math.BigDecimal.RoundingMode.HALF_UP).toString,
+          BigDecimal(jpy / zaif.last_price)
+            .setScale(8, scala.math.BigDecimal.RoundingMode.HALF_UP).toString
         )
     }
   }
