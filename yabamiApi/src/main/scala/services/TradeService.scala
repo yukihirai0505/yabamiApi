@@ -38,6 +38,7 @@ class TradeService(val databaseService: DatabaseService)(
                                         rank: Option[String],
                                         availableSupply: Option[String],
                                         totalSupply: Option[String],
+                                        maxSupply: Option[String],
                                         canTrex: Boolean,
                                         canPolo: Boolean
                                       )
@@ -91,9 +92,9 @@ class TradeService(val databaseService: DatabaseService)(
           convertFutureSeq(
             binanceCurrencies.map(c =>
               db.run(cmcData.filter(_.symbol === c.symbol).result).flatMap { result =>
-                val (rank, availableSupply, totalSupply) = result.headOption match {
-                  case Some(r) => (Some(r.rank), r.availableSupply, r.totalSupply)
-                  case None => (None, None, None)
+                val (rank, availableSupply, totalSupply, maxSupply) = result.headOption match {
+                  case Some(r) => (Some(r.rank), r.availableSupply, r.totalSupply, r.maxSupply)
+                  case None => (None, None, None, None)
                 }
                 Future successful
                   BinanceCurrenciesResponse(
@@ -104,6 +105,7 @@ class TradeService(val databaseService: DatabaseService)(
                     rank = rank,
                     availableSupply = availableSupply,
                     totalSupply = totalSupply,
+                    maxSupply = maxSupply,
                     canTrex = bittrexCurrencies.result.exists(_.Currency == c.symbol),
                     canPolo = poloniexCurrencies.get(c.symbol).isDefined
                   )
