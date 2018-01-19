@@ -21,7 +21,7 @@ object Main extends App with Config {
 
   val instagramService = new InstagramService()
   val twitterService = new TwitterService(databaseService)
-  val tradeService = new TradeService()
+  val tradeService = new TradeService(databaseService)
 
   val httpService = new HttpService(
     instagramService,

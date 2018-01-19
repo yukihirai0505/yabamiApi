@@ -13,7 +13,23 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol with LazyLog
   protected case class ZaifPrice(last_price: Double)
 
   protected case class BtcToJpy(bitflyer: String, coincheck: String, zaif: String)
+
   protected case class JpyToBtc(bitflyer: String, coincheck: String, zaif: String)
+
+  protected case class CMCData(
+                                id: String,
+                                name: String,
+                                symbol: String,
+                                rank: String,
+                                price_btc: Option[String],
+                                available_supply: Option[String],
+                                total_supply: Option[String],
+                                max_supply: Option[String],
+                                percent_change_1h: Option[String],
+                                percent_change_24h: Option[String],
+                                percent_change_7d: Option[String],
+                                last_updated: Option[String]
+                              )
 
   protected case class BinanceCurrency(symbol: String, price: String)
 
@@ -34,6 +50,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol with LazyLog
   implicit val ZaifPriceFormat = jsonFormat1(ZaifPrice)
   implicit val BtcToJpyFormat = jsonFormat3(BtcToJpy)
   implicit val JpyToBtcFormat = jsonFormat3(JpyToBtc)
+  implicit val CMCDataFormat = jsonFormat12(CMCData)
   implicit val BinanceCurrencyFormat = jsonFormat2(BinanceCurrency)
   implicit val BittrexCurrencyFormat = jsonFormat2(BittrexCurrency)
   implicit val BittrexCurrenciesFormat = jsonFormat1(BittrexCurrencies)

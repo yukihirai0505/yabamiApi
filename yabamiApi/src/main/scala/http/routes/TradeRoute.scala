@@ -16,7 +16,9 @@ class TradeRoute(tradeService: TradeService
 
   val route = pathPrefix("currencies") {
     get {
-      pathPrefix("binance") {
+      pathPrefix("cmc") {
+        complete(saveCmCData)
+      } ~ pathPrefix("binance") {
         complete(getBinanceCurrencies.map(_.asJson))
       } ~ pathPrefix("hitbtc") {
         complete(getHitBTCCurrencies.map(_.asJson))
