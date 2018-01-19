@@ -54,6 +54,27 @@ class TwitterService(val databaseService: DatabaseService)(implicit executionCon
     }
   }
 
+  def getRetweetUsersInfo = {
+    // 特別枠: みけさん, だんちょー
+    val SPECIAL_THANKS = Seq("mikean66", "63ad3b4984e34d0")
+    val NAGESEN_MESSAGE = s"@bch_tip tip @%s 27円 節分なので歳の数だけ投げ銭や〜！☺️"
+    twitterClient.followerIdsForUser("yabaiwebyasan").flatMap { followers =>
+      val followerIds = followers.data.ids
+      // ツイートID: 953958906551615488L
+      twitterClient.retweets(953958906551615488L).flatMap { data =>
+        println(s"retweet num: ${data.data.size}")
+        // フォロワーじゃなかったら除外
+        val users = data.data.filter(_.user.exists(u => followerIds.contains(u.id)))
+          .map(_.user.get.screen_name) ++ SPECIAL_THANKS
+        users.foreach { screenName =>
+          println(NAGESEN_MESSAGE format screenName)
+        }
+        println(s"@${users.mkString(" @")}")
+        Future successful "ok"
+      }
+    }
+  }
+
   private def saveTweets(tweetsData: Seq[Tweet]) = {
     val tweetData = DBIO.sequence(
       tweetsData.map { tweet =>

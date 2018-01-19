@@ -23,6 +23,11 @@ class TwitterRoute(twitterService: TwitterService
         post {
           complete(saveCurrentTweets().map(_.asJson))
         }
+
+    } ~ pathPrefix("retweets") {
+      get {
+        complete(getRetweetUsersInfo)
+      }
     }
   }
 
